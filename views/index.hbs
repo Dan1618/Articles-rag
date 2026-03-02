@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Save articles and ask a question</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      max-width: 500px;
+      padding: 8px;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Save articles and ask a question</h2>
+  <form id="articleForm">
+    <div class="form-group">
+      <label>Article Link 1</label>
+      <input type="text" name="link1" required>
+    </div>
+    <div class="form-group">
+      <label>Article Link 2</label>
+      <input type="text" name="link2" required>
+    </div>
+    <div class="form-group">
+      <label>Article Link 3</label>
+      <input type="text" name="link3" required>
+    </div>
+    <div class="form-group">
+      <label>Question</label>
+      <textarea name="question" rows="4" required></textarea>
+    </div>
+    <button type="submit">Save and Answer Question</button>
+    <button type="button" id="answerBtn">Answer Question</button>
+  </form>
+
+  <div id="status"></div>
+
+  <script>
+    const form = document.getElementById('articleForm');
+    const statusDiv = document.getElementById('status');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      await handleRequest('/submit');
+    });
+
+    document.getElementById('answerBtn').addEventListener('click', async function () {
+      await handleRequest('/answer');
+    });
+
+    async function handleRequest(endpoint) {
+      statusDiv.textContent = 'Processing...';
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.status === 'done') {
+            let html = `<h2>Answer</h2><p>${result.answer}</p>`;
+            statusDiv.innerHTML = html;
+          } else {
+            statusDiv.textContent = result.answer || 'Error processing request';
+          }
+        } else {
+          statusDiv.textContent = 'Error processing request';
+        }
+      } catch (error) {
+        statusDiv.textContent = 'Error processing request';
+      }
+    }
+  </script>
+</body>
+
+
+</html>
