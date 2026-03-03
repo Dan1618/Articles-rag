@@ -89,7 +89,14 @@
         if (response.ok) {
           const result = await response.json();
           if (result.status === 'done') {
-            let html = `<h2>Answer</h2><p>${result.answer}</p>`;
+            let html = `<h3>Answer</h3><div class="answer-content"><p>${result.answer}</p></div>`;
+            if (result.sources && result.sources.length > 0) {
+              html += `<h3>Sources</h3><ul class="source-list">`;
+              result.sources.forEach(source => {
+                html += `<li><a href="${source}" target="_blank">${source}</a></li>`;
+              });
+              html += `</ul>`;
+            }
             statusDiv.innerHTML = html;
           } else {
             statusDiv.textContent = result.answer || 'Error processing request';
