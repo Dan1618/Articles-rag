@@ -85,9 +85,12 @@ export class AppService {
         },
       );
 
+      const sources = Array.from(new Set(retrievedDocs.map(doc => doc.metadata.source)));
+
       return {
         status: 'done',
         answer: result.text,
+        sources: sources,
       };
     } catch (error) {
       console.error('Error during answer processing:', error);
