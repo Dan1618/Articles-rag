@@ -1,3 +1,8 @@
+#### the article link
+```
+https://dev.to/dan1618/building-a-knowledge-base-with-rag-using-nestjs-langchain-and-openai-12nk
+```
+
 #### Project setup
 
 ```bash
